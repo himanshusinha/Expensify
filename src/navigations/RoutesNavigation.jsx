@@ -3,7 +3,7 @@ import AuthNavigation from './AuthNavigation';
 import AppNavigation from './AppNavigation';
 
 const RoutesNavigation = () => {
-  return <>{false ? <AppNavigation /> : <AuthNavigation />}</>;
+  return <>{true ? <AppNavigation /> : <AuthNavigation />}</>;
 };
 
 export default RoutesNavigation;
