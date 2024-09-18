@@ -1,21 +1,47 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import colors, {categoryBG} from '../constants/colors';
 
 const ExpenseCard = ({item}) => {
   return (
-    <View
-      style={{backgroundColor: categoryBG[item.category]}}
-      className="flex-row justify-between items-center mb-3 p-3 px-5  border border-gray-200 rounded-2xl">
-      <View style={{flex: 1}}>
-        <Text className={`${colors.heading} font-bold`}>{item.title}</Text>
-        <Text className={`${colors.heading} text-xs`}>{item.category}</Text>
+    <View style={[styles.card, {backgroundColor: categoryBG[item.category]}]}>
+      <View style={styles.detailsContainer}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.category}>{item.category}</Text>
       </View>
       <View>
-        <Text>$ {item.amount}</Text>
+        <Text style={styles.amount}>$ {item.amount}</Text>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+    padding: 12,
+    borderColor: '#D1D5DB',
+    borderWidth: 1,
+    borderRadius: 16,
+  },
+  detailsContainer: {
+    flex: 1,
+  },
+  title: {
+    color: colors.heading,
+    fontWeight: 'bold',
+  },
+  category: {
+    color: colors.heading,
+    fontSize: 12,
+  },
+  amount: {
+    // Add any specific styles for amount if needed
+    fontSize: 12,
+  },
+});
 
 export default ExpenseCard;

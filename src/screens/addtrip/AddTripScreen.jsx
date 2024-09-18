@@ -1,4 +1,11 @@
-import {View, Text, Image, TextInput, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import React, {useState} from 'react';
 import ScreenContainer from '../../components/ScreenContainer';
 import colors from '../../constants/colors';
@@ -6,6 +13,7 @@ import BackButton from '../../components/BackButton';
 import images from '../../constants/images';
 import {useNavigation} from '@react-navigation/native';
 import navigationStrings from '../../navigations/navigationStrings';
+import Snackbar from 'react-native-snackbar';
 
 const AddTripScreen = () => {
   const [place, setPlace] = useState('');
@@ -15,58 +23,109 @@ const AddTripScreen = () => {
   const handleAddTrip = () => {
     if (place && country) {
       navigation.navigate(navigationStrings.HOME_SCREEN);
+    } else {
+      Snackbar.show({
+        text: 'Place and Country are required',
+        duration: Snackbar.LENGTH_SHORT,
+      });
     }
   };
 
   return (
-    <ScreenContainer>
-      <View className="flex justify-between h-full mx-4">
-        <View className="relative">
-          <View className="absolute top-0 left-0 flex-row items-center">
-            <BackButton />
-            <Text
-              className={`${colors.heading} text-xl font-bold text-center flex-1`}>
-              Add Trip
-            </Text>
-          </View>
-
-          <View className="flex-row justify-center items-center mt-5">
-            <Image className="h-72 w-72" source={images.four} />
-          </View>
-          <View className="space-y-2 mx-2">
-            <Text className={`${colors.heading} text-lg font-bold`}>
-              Where On Earth?
-            </Text>
-            <TextInput
-              placeholder="Place"
-              value={place}
-              onChangeText={value => setPlace(value)}
-              className="p-4 bg-white rounded-full mb-3"
-            />
-            <Text className={`${colors.heading} text-lg font-bold`}>
-              Where On Earth?
-            </Text>
-            <TextInput
-              placeholder="Country"
-              value={country}
-              onChangeText={value => setCountry(value)}
-              className="p-4 bg-white rounded-full mb-3"
-            />
-          </View>
+    <ScreenContainer style={styles.container}>
+      <View>
+        <View style={styles.header}>
+          <BackButton />
+          <Text style={styles.title}>Add Trip</Text>
         </View>
-        <View>
-          <TouchableOpacity
-            onPress={handleAddTrip}
-            style={{backgroundColor: colors.button}}
-            className="my-6 rounded-full p-3 shadow-sm mx-2">
-            <Text className="text-center text-white text-lg font-bold">
-              Add Trip
-            </Text>
-          </TouchableOpacity>
+
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={images.four} />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Where On Earth?</Text>
+          <TextInput
+            placeholder="Place"
+            value={place}
+            onChangeText={setPlace}
+            style={styles.input}
+          />
+          <Text style={styles.label}>Where In Country?</Text>
+          <TextInput
+            placeholder="Country"
+            value={country}
+            onChangeText={setCountry}
+            style={styles.input}
+          />
         </View>
       </View>
+      <TouchableOpacity onPress={handleAddTrip} style={styles.button}>
+        <Text style={styles.buttonText}>Add Trip</Text>
+      </TouchableOpacity>
     </ScreenContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+  },
+  header: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  title: {
+    color: colors.heading,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  image: {
+    height: 180,
+    width: 180,
+  },
+  inputContainer: {
+    marginHorizontal: 20,
+    marginTop: 10,
+  },
+  label: {
+    color: colors.heading,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  input: {
+    padding: 16,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    marginBottom: 12,
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: colors.button,
+    borderRadius: 50,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginHorizontal: 8,
+    top: 280,
+    marginHorizontal: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default AddTripScreen;

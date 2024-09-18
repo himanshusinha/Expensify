@@ -3,26 +3,16 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import navigationStrings from './navigationStrings';
 import * as Screens from '../screens';
+import {useDispatch, useSelector} from 'react-redux';
+import {onAuthStateChanged} from 'firebase/auth';
+import {auth} from '../config/firebaseConfig';
+import {setUser} from '../redux/slices/user';
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen
-          name={navigationStrings.WELCOME_SCREEN}
-          component={Screens.WelcomeScreen}
-        />
-        <Stack.Screen
-          options={{presentation: 'modal'}}
-          name={navigationStrings.LOGIN_SCREEN}
-          component={Screens.LoginScreen}
-        />
-        <Stack.Screen
-          options={{presentation: 'modal'}}
-          name={navigationStrings.SIGNUP_SCREEN}
-          component={Screens.SignUpScreen}
-        />
         <Stack.Screen
           name={navigationStrings.HOME_SCREEN}
           component={Screens.HomeScreen}

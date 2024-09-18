@@ -1,10 +1,16 @@
-import {View, Text, TouchableOpacity, Image, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
 import React from 'react';
 import ScreenContainer from '../../components/ScreenContainer';
 import BackButton from '../../components/BackButton';
 import colors from '../../constants/colors';
 import images from '../../constants/images';
-import styles from './styles';
 import ExpenseCard from '../../components/ExpenseCard';
 import EmptyList from '../../components/EmptyList';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -35,38 +41,28 @@ const TripExpenseScreen = () => {
   const route = useRoute();
   const {place, country} = route.params || {};
   const navigation = useNavigation();
+
   return (
-    <ScreenContainer className="flex-1">
-      <View className="flex-row justify-center items-center mx-4">
+    <ScreenContainer style={styles.container}>
+      <View style={styles.header}>
         <BackButton />
-        <View className="flex-1">
-          <Text className={`${colors.heading}  text-xl font-bold text-center `}>
-            {place}
-          </Text>
-          <Text
-            className={`${colors.heading}  text-xs font-bold text-center mx-4`}>
-            {country}
-          </Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.placeText}>{place}</Text>
+          <Text style={styles.countryText}>{country}</Text>
         </View>
       </View>
-      <Image
-        resizeMode="contain"
-        source={images.seven}
-        style={{width: '100%', height: 250}}
-      />
-      <View className="flex-row justify-between items-center mb-4 mx-4">
-        <Text style={[styles.heading, {fontSize: 20, fontWeight: 'bold'}]}>
-          Expenses
-        </Text>
+      <Image resizeMode="contain" source={images.seven} style={styles.image} />
+      <View style={styles.expensesHeader}>
+        <Text style={styles.expensesTitle}>Expenses</Text>
         <TouchableOpacity
-          onPress={() => {
-            navigation.navigate(navigationStrings.ADD_EXPENSE_SCREEN);
-          }}
-          className="p-2 px-3 bg-white border border-gray-200 rounded-full">
-          <Text style={styles.logout}>Add Expense</Text>
+          onPress={() =>
+            navigation.navigate(navigationStrings.ADD_EXPENSE_SCREEN)
+          }
+          style={styles.addExpenseButton}>
+          <Text style={styles.addExpenseText}>Add Expense</Text>
         </TouchableOpacity>
       </View>
-      <View className="mx-4">
+      <View style={styles.expenseListContainer}>
         <FlatList
           data={items}
           ListEmptyComponent={
@@ -86,5 +82,62 @@ const TripExpenseScreen = () => {
     </ScreenContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  placeText: {
+    color: colors.heading,
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  countryText: {
+    color: colors.heading,
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginHorizontal: 16,
+  },
+  image: {
+    width: '100%',
+    height: 250,
+  },
+  expensesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+    marginHorizontal: 16,
+  },
+  expensesTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  addExpenseButton: {
+    padding: 8,
+    paddingHorizontal: 12,
+    backgroundColor: 'white',
+    borderColor: '#D1D5DB',
+    borderWidth: 1,
+    borderRadius: 50,
+  },
+  addExpenseText: {
+    color: colors.logout,
+  },
+  expenseListContainer: {
+    marginHorizontal: 16,
+  },
+});
 
 export default TripExpenseScreen;

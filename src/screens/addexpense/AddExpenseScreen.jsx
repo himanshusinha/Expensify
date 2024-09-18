@@ -1,4 +1,11 @@
-import {View, Text, Image, TextInput, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import React, {useState} from 'react';
 import ScreenContainer from '../../components/ScreenContainer';
 import colors from '../../constants/colors';
@@ -6,90 +13,165 @@ import BackButton from '../../components/BackButton';
 import images from '../../constants/images';
 import {useNavigation} from '@react-navigation/native';
 import navigationStrings from '../../navigations/navigationStrings';
+import Snackbar from 'react-native-snackbar';
 import {categories} from '../../constants/list';
 
 const AddExpenseScreen = () => {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
-
   const navigation = useNavigation();
 
-  const handleAddExpense = () => {
+  const handleAddTrip = () => {
     if (title && amount && category) {
-      navigation.goBack();
+      navigation.navigate(navigationStrings.HOME_SCREEN);
+    } else {
+      Snackbar.show({
+        text: 'Title,Amount and Category are required',
+        duration: Snackbar.LENGTH_SHORT,
+      });
     }
   };
 
   return (
-    <ScreenContainer>
-      <View className="flex justify-between h-full mx-4">
-        <View className="relative">
-          <View className="absolute top-0 left-0 flex-row items-center">
-            <BackButton />
-            <Text
-              className={`${colors.heading} text-xl font-bold text-center flex-1`}>
-              Add Expense
-            </Text>
-          </View>
-
-          <View className="flex-row justify-center items-center mt-5">
-            <Image
-              className="h-72 w-72"
-              source={require('../../assets/images/expenseBanner.png')}
-            />
-          </View>
-          <View className="space-y-2 mx-2">
-            <Text className={`${colors.heading} text-lg font-bold`}>
-              For What?
-            </Text>
-            <TextInput
-              placeholder="Title"
-              value={title}
-              onChangeText={value => setTitle(value)}
-              className="p-4 bg-white rounded-full mb-3"
-            />
-            <Text className={`${colors.heading} text-lg font-bold`}>
-              How Much?
-            </Text>
-            <TextInput
-              placeholder="Amount"
-              value={amount}
-              onChangeText={value => setAmount(value)}
-              className="p-4 bg-white rounded-full mb-3"
-            />
-          </View>
-          <View className="mx-2 space-x-2">
-            <Text className="text-lg font-bold">Category</Text>
-            <View className="flex-row flex-wrap items-center">
-              {categories.map(cat => {
-                let bgColor = 'bg-white';
-                if (cat.value == category) bgColor = 'bg-green-200';
-                return (
-                  <TouchableOpacity
-                    onPress={() => setCategory(cat.value)}
-                    key={cat.value}
-                    className={`rounded-full ${bgColor} px-4 p-3 mb-2 mr-2`}>
-                    <Text>{cat.title}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+    <ScreenContainer style={styles.container}>
+      <View>
+        <View style={styles.header}>
+          <BackButton />
+          <Text style={styles.title}>Add Expense</Text>
+        </View>
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={images.four} />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>For What?</Text>
+          <TextInput
+            placeholder="Title"
+            value={title}
+            onChangeText={setTitle}
+            style={styles.input}
+          />
+          <Text style={styles.label}>How Much?</Text>
+          <TextInput
+            placeholder="Amount"
+            value={amount}
+            onChangeText={setAmount}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.categoryContainer}>
+          <Text style={styles.label}>Category</Text>
+          <View style={styles.categoryButtons}>
+            {categories.map(cat => {
+              const bgColor = cat.value === category ? colors.button : 'white';
+              const bgTextColor = cat.value === category ? 'white' : null;
+              return (
+                <TouchableOpacity
+                  onPress={() => setCategory(cat.value)}
+                  key={cat.value}
+                  style={[styles.categoryButton, {backgroundColor: bgColor}]}>
+                  <Text style={[styles.buttonText, {color: bgTextColor}]}>
+                    {cat.title}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
-        <View>
-          <TouchableOpacity
-            onPress={handleAddExpense}
-            style={{backgroundColor: colors.button}}
-            className="my-6 rounded-full p-3 shadow-sm mx-2">
-            <Text className="text-center text-white text-lg font-bold">
-              Add Expense
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={handleAddTrip} style={styles.buttonSubmit}>
+          <Text style={styles.buttonSubmitText}>Add Expense</Text>
+        </TouchableOpacity>
       </View>
     </ScreenContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  header: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  title: {
+    color: colors.heading,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  image: {
+    height: 180,
+    width: 180,
+  },
+  inputContainer: {
+    marginHorizontal: 20,
+    marginTop: 10,
+  },
+  label: {
+    color: colors.heading,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  input: {
+    padding: 16,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    marginBottom: 12,
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: colors.button,
+    borderRadius: 50,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginHorizontal: 8,
+    top: 280,
+    marginHorizontal: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  categoryContainer: {
+    marginHorizontal: 20,
+  },
+  categoryButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  categoryButton: {
+    borderRadius: 50,
+    padding: 10,
+    marginBottom: 8,
+    marginRight: 8,
+  },
+  buttonSubmit: {
+    backgroundColor: colors.button,
+    borderRadius: 50,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginHorizontal: 8,
+    marginHorizontal: 20,
+    top: 190,
+  },
+  buttonSubmitText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+});
 
 export default AddExpenseScreen;
