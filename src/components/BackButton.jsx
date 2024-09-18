@@ -10,7 +10,6 @@ const BackButton = () => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log('Back button pressed');
         navigation.goBack();
       }}
       className="bg-white rounded-full h-8 w-8 justify-center items-center">
