@@ -4,6 +4,8 @@ import ScreenContainer from '../../components/ScreenContainer';
 import styles from './styles'; // Ensure styles are correctly defined
 import images, {randomImage} from '../../constants/images';
 import EmptyList from '../../components/EmptyList';
+import {useNavigation} from '@react-navigation/native';
+import navigationStrings from '../../navigations/navigationStrings';
 
 const items = [
   {id: '1', place: 'Gujrat', country: 'India'},
@@ -13,11 +15,20 @@ const items = [
 ];
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
+
+  const handleSelectTrip = item => {
+    // Navigate to the correct screen with place and country
+    navigation.navigate(navigationStrings.TRIP_EXPENSE_SCREEN, {
+      place: item.place,
+      country: item.country,
+    });
+  };
+
   return (
     <ScreenContainer>
       <View className="flex-row justify-between items-center p-4">
         <Text style={styles.heading}>Expensify</Text>
-
         <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text style={styles.logout}>Logout</Text>
         </TouchableOpacity>
@@ -34,8 +45,11 @@ const HomeScreen = () => {
           <Text style={[styles.heading, {fontSize: 20, fontWeight: 'bold'}]}>
             Recent Trips
           </Text>
-
-          <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(navigationStrings.ADD_TRIP_SCREEN, {});
+            }}
+            className="p-2 px-3 bg-white border border-gray-200 rounded-full">
             <Text style={styles.logout}>Add Trip</Text>
           </TouchableOpacity>
         </View>
@@ -50,7 +64,9 @@ const HomeScreen = () => {
             showsVerticalScrollIndicator={false}
             renderItem={({item}) => (
               <View className="w-1/2 p-2">
-                <TouchableOpacity className="bg-white p-3 rounded-2xl shadow-sm ">
+                <TouchableOpacity
+                  onPress={() => handleSelectTrip(item)}
+                  className="bg-white p-3 rounded-2xl shadow-sm ">
                   <Image source={randomImage()} className="w-40 h-40 " />
                   <Text
                     style={[
