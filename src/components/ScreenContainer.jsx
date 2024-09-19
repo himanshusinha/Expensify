@@ -1,11 +1,15 @@
-import {SafeAreaView, StatusBar} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import React from 'react';
 
 const ScreenContainer = ({children}) => {
-  let statusBarHeight = StatusBar.currentHeight;
-  return (
-    <SafeAreaView style={{marginTop: statusBarHeight}}>{children}</SafeAreaView>
-  );
+  return <SafeAreaView style={[styles.container]}>{children}</SafeAreaView>;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white', // Set background color to white
+  },
+});
 
 export default ScreenContainer;

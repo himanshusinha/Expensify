@@ -11,20 +11,37 @@ import ScreenContainer from '../../components/ScreenContainer';
 import colors from '../../constants/colors';
 import BackButton from '../../components/BackButton';
 import images from '../../constants/images';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import navigationStrings from '../../navigations/navigationStrings';
 import Snackbar from 'react-native-snackbar';
 import {categories} from '../../constants/list';
+import {addDoc} from 'firebase/firestore';
+import {expensesRef} from '../../config/firebaseConfig';
+import Loading from '../../components/Loading';
 
 const AddExpenseScreen = () => {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
-  const handleAddTrip = () => {
+  const isFocused = useIsFocused();
+  const route = useRoute();
+  const {id} = route.params || {};
+  console.log('id.....', id);
+  const handleAddTrip = async () => {
     if (title && amount && category) {
-      navigation.navigate(navigationStrings.HOME_SCREEN);
+      setLoading(true);
+      let doc = await addDoc(expensesRef, {
+        title,
+        amount,
+        category,
+        tripId: id,
+      });
+      setLoading(false);
+      if (doc && doc.id) {
+        navigation.goBack();
+      }
     } else {
       Snackbar.show({
         text: 'Title,Amount and Category are required',
@@ -78,9 +95,13 @@ const AddExpenseScreen = () => {
             })}
           </View>
         </View>
-        <TouchableOpacity onPress={handleAddTrip} style={styles.buttonSubmit}>
-          <Text style={styles.buttonSubmitText}>Add Expense</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <Loading />
+        ) : (
+          <TouchableOpacity onPress={handleAddTrip} style={styles.buttonSubmit}>
+            <Text style={styles.buttonSubmitText}>Add Expense</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </ScreenContainer>
   );
@@ -161,11 +182,11 @@ const styles = StyleSheet.create({
   buttonSubmit: {
     backgroundColor: colors.button,
     borderRadius: 50,
-    paddingVertical: 12,
+    paddingVertical: 15,
     alignItems: 'center',
     marginHorizontal: 8,
     marginHorizontal: 20,
-    top: 190,
+    top: 180,
   },
   buttonSubmitText: {
     color: 'white',

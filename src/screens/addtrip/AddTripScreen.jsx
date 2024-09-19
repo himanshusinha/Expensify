@@ -12,17 +12,30 @@ import colors from '../../constants/colors';
 import BackButton from '../../components/BackButton';
 import images from '../../constants/images';
 import {useNavigation} from '@react-navigation/native';
-import navigationStrings from '../../navigations/navigationStrings';
 import Snackbar from 'react-native-snackbar';
+import Loading from '../../components/Loading';
+import {useSelector} from 'react-redux';
+import {addDoc} from 'firebase/firestore';
+import {tripRef} from '../../config/firebaseConfig';
 
 const AddTripScreen = () => {
   const [place, setPlace] = useState('');
   const [country, setCountry] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
-  const handleAddTrip = () => {
+  const {user} = useSelector(state => state?.user);
+  const handleAddTrip = async () => {
     if (place && country) {
-      navigation.navigate(navigationStrings.HOME_SCREEN);
+      setLoading(true);
+      let doc = await addDoc(tripRef, {
+        place,
+        country,
+        userId: user.uid,
+      });
+      setLoading(false);
+      if (doc && doc.id) {
+        navigation.goBack();
+      }
     } else {
       Snackbar.show({
         text: 'Place and Country are required',
@@ -60,9 +73,13 @@ const AddTripScreen = () => {
           />
         </View>
       </View>
-      <TouchableOpacity onPress={handleAddTrip} style={styles.button}>
-        <Text style={styles.buttonText}>Add Trip</Text>
-      </TouchableOpacity>
+      {loading ? (
+        <Loading />
+      ) : (
+        <TouchableOpacity onPress={handleAddTrip} style={styles.button}>
+          <Text style={styles.buttonText}>Add Trip</Text>
+        </TouchableOpacity>
+      )}
     </ScreenContainer>
   );
 };

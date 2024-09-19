@@ -3,10 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import navigationStrings from './navigationStrings';
 import * as Screens from '../screens';
-import {useDispatch, useSelector} from 'react-redux';
-import {onAuthStateChanged} from 'firebase/auth';
-import {auth} from '../config/firebaseConfig';
-import {setUser} from '../redux/slices/user';
+
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {

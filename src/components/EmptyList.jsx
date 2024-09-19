@@ -1,16 +1,39 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import images from '../constants/images';
 
 const EmptyList = ({message}) => {
   return (
-    <View className="flex justify-center item-center my-5 space-y-3">
-      <Image className="w-36 h-36 shadow" source={images.empty} />
-      <Text className="font-bold text-gray-400">
-        {message || 'data not found'}
-      </Text>
+    <View style={styles.container}>
+      <Image style={styles.image} source={images.empty} />
+      <Text style={styles.message}>{message || 'Data not found'}</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
+    marginVertical: 20,
+    marginHorizontal: 16,
+    marginTop: 100,
+  },
+  image: {
+    width: 144, // Example size (36 * 4)
+    height: 144, // Example size (36 * 4)
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  message: {
+    fontWeight: '500',
+    color: '#000', // Equivalent to gray-400
+    marginTop: 10,
+  },
+});
 
 export default EmptyList;

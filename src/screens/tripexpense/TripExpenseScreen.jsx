@@ -6,15 +6,19 @@ import {
   FlatList,
   StyleSheet,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenContainer from '../../components/ScreenContainer';
 import BackButton from '../../components/BackButton';
 import colors from '../../constants/colors';
 import images from '../../constants/images';
 import ExpenseCard from '../../components/ExpenseCard';
 import EmptyList from '../../components/EmptyList';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import navigationStrings from '../../navigations/navigationStrings';
+import Loading from '../../components/Loading';
+import {expensesRef} from '../../config/firebaseConfig';
+import {getDocs, query, where} from 'firebase/firestore';
+import {useSelector} from 'react-redux';
 
 const items = [
   {
@@ -39,7 +43,56 @@ const items = [
 
 const TripExpenseScreen = () => {
   const route = useRoute();
-  const {place, country} = route.params || {};
+  const {user} = useSelector(state => state.user);
+  const {id, place, country} = route.params || {id: null};
+  const [loading, setLoading] = useState(false);
+  const [expenses, setExpenses] = useState([]);
+  console.log('Expense Screen ID:', id); // Verify id is defined
+  const isFocused = useIsFocused();
+
+  const fetchExpenses = async () => {
+    const q = query(expensesRef, where('tripId', '==', id));
+    const querySnapShot = await getDocs(q);
+    let data = [];
+    querySnapShot.forEach(doc => {
+      data.push({...doc.data(), id: doc.id});
+      setExpenses(data);
+    });
+  };
+
+  useEffect(() => {
+    if (isFocused) fetchExpenses();
+  }, [isFocused]);
+
+  const handleAddExpense = async () => {
+    if (title && amount && category && id) {
+      // Check for id here
+      setLoading(true);
+      try {
+        let doc = await addDoc(expensesRef, {
+          title,
+          amount,
+          category,
+          tripId: id,
+        });
+        setLoading(false);
+        if (doc && doc.id) {
+          navigation.goBack();
+        }
+      } catch (error) {
+        setLoading(false);
+        Snackbar.show({
+          text: 'Error adding expense. Please try again.',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      }
+    } else {
+      Snackbar.show({
+        text: 'Title, Amount, Category, and Trip ID are required',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
+  };
   const navigation = useNavigation();
 
   return (
@@ -54,28 +107,31 @@ const TripExpenseScreen = () => {
       <Image resizeMode="contain" source={images.seven} style={styles.image} />
       <View style={styles.expensesHeader}>
         <Text style={styles.expensesTitle}>Expenses</Text>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(navigationStrings.ADD_EXPENSE_SCREEN)
-          }
-          style={styles.addExpenseButton}>
-          <Text style={styles.addExpenseText}>Add Expense</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <Loading />
+        ) : (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(navigationStrings.ADD_EXPENSE_SCREEN, {
+                id,
+                place,
+                country,
+              })
+            }
+            style={styles.addExpenseButton}>
+            <Text style={styles.addExpenseText}>Add Expense</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.expenseListContainer}>
         <FlatList
-          data={items}
+          data={expenses}
           ListEmptyComponent={
             <EmptyList message={"You don't have any expenses yet"} />
           }
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => (
-            <ExpenseCard
-              onPress={() =>
-                navigation.navigate(navigationStrings.ADD_EXPENSE_SCREEN)
-              }
-              item={item}
-            />
+            <ExpenseCard onPress={handleAddExpense} item={item} />
           )}
         />
       </View>

@@ -15,18 +15,46 @@ import {useNavigation} from '@react-navigation/native';
 import Snackbar from 'react-native-snackbar';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../config/firebaseConfig';
+import {useDispatch, useSelector} from 'react-redux';
+import Loading from '../../components/Loading';
+import {setUserLoading} from '../../redux/slices/user';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
+  const {userLoading} = useSelector(state => state?.user);
+  const [isSignUp, setIsSignUp] = useState(true); // Toggle between sign-up and sign-in
 
+  const dispatch = useDispatch();
   const handleSubmit = async () => {
     if (email && password) {
-      setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
-      setLoading(false);
+      try {
+        dispatch(setUserLoading(true));
+        if (isSignUp) {
+          // Use createUserWithEmailAndPassword for sign up
+          await signInWithEmailAndPassword(auth, email, password);
+          Snackbar.show({
+            text: 'Sign In Successful!',
+            duration: Snackbar.LENGTH_SHORT,
+          });
+          // Optionally navigate to the next screen
+        } else {
+          // Use signInWithEmailAndPassword for sign in
+          await signInWithEmailAndPassword(auth, email, password);
+          Snackbar.show({
+            text: 'Sign In Successful!',
+            duration: Snackbar.LENGTH_SHORT,
+          });
+        }
+        dispatch(setUserLoading(false));
+      } catch (error) {
+        dispatch(setUserLoading(false));
+        console.log('Error in signup/signin:', error);
+        Snackbar.show({
+          text: 'Please enter correct details',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      }
     } else {
       Snackbar.show({
         text: 'Email and Password are required',
@@ -66,12 +94,9 @@ const LoginScreen = () => {
             style={styles.input}
           />
         </View>
-        <TouchableOpacity
-          onPress={handleSubmit}
-          style={styles.button}
-          disabled={loading}>
-          {loading ? (
-            <ActivityIndicator size="small" color="white" />
+        <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+          {userLoading ? (
+            <Loading />
           ) : (
             <Text style={styles.buttonText}>Sign In</Text>
           )}

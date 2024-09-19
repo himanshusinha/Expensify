@@ -6,35 +6,49 @@ import {
   FlatList,
   StyleSheet,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenContainer from '../../components/ScreenContainer';
 import images, {randomImage} from '../../constants/images';
 import EmptyList from '../../components/EmptyList';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import navigationStrings from '../../navigations/navigationStrings';
-
-const items = [
-  {id: '1', place: 'Gujrat', country: 'India'},
-  {id: '2', place: 'London Eye', country: 'England'},
-  {id: '3', place: 'Washington DC', country: 'America'},
-  {id: '4', place: 'New York', country: 'America'},
-];
+import {signOut} from 'firebase/auth';
+import {auth, tripRef} from '../../config/firebaseConfig';
+import {useSelector} from 'react-redux';
+import {getDoc, getDocs, query, where} from 'firebase/firestore';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const {user} = useSelector(state => state.user);
+  const [trips, setTrips] = useState([]);
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+  const isFocused = useIsFocused();
 
-  const handleSelectTrip = item => {
-    navigation.navigate(navigationStrings.TRIP_EXPENSE_SCREEN, {
-      place: item.place,
-      country: item.country,
+  const fetchTrips = async () => {
+    const q = query(tripRef, where('userId', '==', user.uid));
+    const querySnapShot = await getDocs(q);
+    let data = [];
+    querySnapShot.forEach(doc => {
+      data.push({...doc.data(), id: doc.id});
+      setTrips(data);
     });
   };
 
+  useEffect(() => {
+    if (isFocused) fetchTrips();
+  }, [isFocused]);
+
+  const handleSelectTrip = item => {
+    navigation.navigate(navigationStrings.TRIP_EXPENSE_SCREEN, {...item});
+  };
+
   return (
-    <ScreenContainer>
+    <ScreenContainer children={{backgroundColor: 'white'}}>
       <View style={styles.header}>
         <Text style={styles.heading}>Expensify</Text>
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Text style={styles.logout}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -57,7 +71,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
         <FlatList
-          data={items}
+          data={trips}
           numColumns={2}
           ListEmptyComponent={
             <EmptyList message={"You don't have any trip yet"} />
@@ -149,8 +163,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tripImage: {
-    width: 160,
-    height: 160,
+    width: 130,
+    height: 130,
   },
   tripPlace: {
     fontWeight: 'bold',

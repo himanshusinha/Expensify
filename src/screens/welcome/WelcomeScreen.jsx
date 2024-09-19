@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 32, // Adjusted for larger title
+    fontSize: 32,
     color: colors.heading,
     marginBottom: 10,
   },
@@ -73,8 +73,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+
   buttonMargin: {
     marginTop: 10,
+  },
+  googleContainer: {
+    marginStart: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  googleIcon: {
+    width: 30,
+    height: 30,
   },
 });
 
