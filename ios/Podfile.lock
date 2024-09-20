@@ -1645,7 +1645,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGoogleSignin (13.0.1):
+  - RNGoogleSignin (13.0.3):
     - GoogleSignIn (~> 7.1)
     - React-Core
   - RNReanimated (3.15.2):
@@ -2062,7 +2062,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNFBApp: 5f87753a8d8b37d229adf85cd0ff37709ffdf008
   RNGestureHandler: 3b6fa2bfa341c413d3d08444b838515b58e48ee7
-  RNGoogleSignin: 3e8b953338bcef2ed568420eb92cc24548bc3a6f
+  RNGoogleSignin: e33878799d39cf78401ac65f9e50beb6fefa1420
   RNReanimated: ece067b779e0d6c7887c6bb80d381d0a0efd43c9
   RNScreens: 19719a9c326e925498ac3b2d35c4e50fe87afc06
   RNSnackbar: eb4e012514c60433cbe933be0846e8f2abb6d2b6

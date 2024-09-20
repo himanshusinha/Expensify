@@ -128,6 +128,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: 12,
     marginTop: 10,
+    borderWidth: 0.5,
+    borderColor: '#cfcfcf',
   },
   button: {
     backgroundColor: colors.button,

@@ -21,6 +21,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const {user} = useSelector(state => state.user);
   const [trips, setTrips] = useState([]);
+
   const handleLogout = async () => {
     await signOut(auth);
   };
@@ -45,7 +46,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScreenContainer children={{backgroundColor: 'white'}}>
+    <ScreenContainer>
       <View style={styles.header}>
         <Text style={styles.heading}>Expensify</Text>
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
