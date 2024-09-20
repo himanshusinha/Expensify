@@ -5,19 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import ScreenContainer from '../../components/ScreenContainer';
 import colors from '../../constants/colors';
 import BackButton from '../../components/BackButton';
-import {useNavigation} from '@react-navigation/native';
-import navigationStrings from '../../navigations/navigationStrings';
 import Snackbar from 'react-native-snackbar';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../config/firebaseConfig';
 import {useDispatch, useSelector} from 'react-redux';
 import {setUserLoading} from '../../redux/slices/user';
@@ -25,7 +19,7 @@ import {setUserLoading} from '../../redux/slices/user';
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(true); // Toggle between sign-up and sign-in
+  const [isSignUp, setIsSignUp] = useState(true);
 
   const {userLoading} = useSelector(state => state?.user);
   const dispatch = useDispatch();
@@ -34,14 +28,12 @@ const SignUpScreen = () => {
       try {
         dispatch(setUserLoading(true));
         if (isSignUp) {
-          // Use createUserWithEmailAndPassword for sign up
           await createUserWithEmailAndPassword(auth, email, password);
           Snackbar.show({
             text: 'Sign Up Successful!',
             duration: Snackbar.LENGTH_SHORT,
           });
         } else {
-          // Use signInWithEmailAndPassword for sign in
           await createUserWithEmailAndPassword(auth, email, password);
           Snackbar.show({
             text: 'Sign In Successful!',
@@ -49,7 +41,6 @@ const SignUpScreen = () => {
           });
         }
         dispatch(setUserLoading(false));
-        // Optionally navigate to the next screen
       } catch (error) {
         dispatch(setUserLoading(false));
         console.log('Error in signup/signin:', error);
@@ -153,6 +144,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 50,
     marginTop: 10,
+    borderWidth: 0.5,
+    borderColor: '#cfcfcf',
   },
   button: {
     backgroundColor: colors.button,
